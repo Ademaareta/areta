@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="id" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special for u ✨</title>
+    <meta name="google" content="notranslate">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --purple-lilac: #E9D5FF; 
+            --deep-purple: #e37afd;
+            --text-color: #9221a8;
+            --white: #FFFFFF;
+            --neon-purple-bright: #f0a3ff; 
+        }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(180deg, var(--purple-lilac) 0%, var(--white) 40%, var(--white) 100%);
+            background-attachment: fixed;
+            overflow: hidden;
+            color: var(--text-color);
+            touch-action: manipulation;
+        }
+
+        #techCanvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; display: none; background: #0a0a0f;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .fade-in { animation: fadeIn 0.8s ease forwards; }
+
+        .click-heart {
+            position: fixed; font-size: 24px; pointer-events: none;
+            z-index: 9999; animation: heartFade 1s ease-out forwards;
+        }
+        @keyframes heartFade {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+            100% { transform: translate(-50%, -150%) scale(1.5); opacity: 0; }
+        }
+
+        .falling {
+            position: fixed; top: -50px; z-index: 5;
+            pointer-events: none; animation: fall linear forwards; opacity: 0.7;
+        }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+
+        #catWalk {
+            position: fixed; bottom: 0; z-index: 1; 
+            animation: walk 18s linear infinite; width: 130px; 
+            transition: opacity 0.5s ease; pointer-events: none;
+        }
+        #catWalk video { width: 100%; }
+
+        .page {
+            display: none; height: 100vh; width: 100%;
+            flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; padding: 20px; box-sizing: border-box;
+            position: relative; z-index: 2;
+        }
+        .active { display: flex; }
+
+        .content-box {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 25px; border-radius: 35px;
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.15);
+            max-width: 380px; width: 90%;
+            display: flex; flex-direction: column; align-items: center;
+            backdrop-filter: blur(5px); border: 1px solid rgba(255, 255, 255, 0.5);
+            position: relative; overflow: hidden;
+        }
+        
+        .bg-video-top {
+            position: absolute; 
+            top: 0; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: 100%; 
+            height: 140px; 
+            object-fit: contain; 
+            z-index: 0; 
+            opacity: 0.7;
+            pointer-events: none;
+            mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+        }
+
+        .text-wrapper { 
+            position: relative; 
+            z-index: 1; 
+            width: 100%; 
+        }
+
+        .content-box p {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 0.82rem; 
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .wide-box { max-width: 480px !important; }
+
+        .btn-float {
+            font-family: 'Fredoka', sans-serif;
+            background: var(--deep-purple); color: white; border: none;
+            padding: 12px 25px; margin: 10px auto 0 auto; border-radius: 25px;
+            font-weight: 600; cursor: pointer; width: 100%; max-width: 200px;
+            transition: all 0.3s ease; display: flex; justify-content: center; align-items: center;
+        }
+
+        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px; }
+        .num-btn { 
+            font-family: 'Fredoka', sans-serif;
+            width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--purple-lilac); 
+            background: white; color: var(--deep-purple); font-size: 1.3rem; font-weight: 600; 
+            cursor: pointer; transition: 0.2s;
+        }
+        .num-btn:active { background: var(--purple-lilac); transform: scale(0.9); }
+
+        #clueModal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); z-index: 3000; justify-content: center; align-items: center;
+        }
+
+        .media-16-9 { width: 100%; aspect-ratio: 16/9; border-radius: 20px; overflow: hidden; margin-bottom: 15px; border: 3px solid var(--purple-lilac); background: #000; position: relative; z-index: 2; }
+        .media-16-9 video { width: 100%; height: 100%; object-fit: cover; }
+        
+        .media-square { width: 200px; height: 200px; border-radius: 20px; overflow: hidden; margin-bottom: 15px; border: 3px solid var(--purple-lilac); position: relative; z-index: 2; }
+        .media-square img { width: 100%; height: 100%; object-fit: cover; }
+
+        .slider-wrapper { width: 100%; overflow: hidden; white-space: nowrap; padding: 20px 0; position: relative; }
+        .slider-track { display: flex; gap: 15px; width: max-content; animation: globeScroll 35s linear infinite; }
+        .slider-track img { width: 180px; height: 250px; object-fit: cover; border: 4px solid rgb(255, 191, 244); border-radius: 15px; flex-shrink: 0; }
+
+        @keyframes globeScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        @keyframes walk { from { left: -150px; } to { left: 110%; } }
+    </style>
+</head>
+<body>
+
+    <canvas id="techCanvas"></canvas>
+    <audio id="lagu" src="aboutyou.mp3" loop preload="auto"></audio>
+    
+    <div id="catWalk" style="display: none;">
+        <video src="vidio-kucing/vid1.mp4" autoplay loop muted playsinline></video>
+    </div>
+
+    <div id="clueModal">
+        <div class="content-box">
+            <h2>Petunjuk PIN💡</h2>
+            <p>Tanggal lahir kita berdua digabung yaa.</p>
+            <p><strong>Format: DD-DD</strong></p>
+            <button class="btn-float" onclick="toggleClue(false)">okei sayang</button>
+        </div>
+    </div>
+
+    <div id="pagePin" class="page active">
+        <div class="content-box fade-in"> 
+            <h2>Masukan PIN</h2>
+            <div class="pin-display" style="display:flex; gap:15px; margin:20px 0;">
+                <div class="dot" id="dot1" style="width:16px; height:16px; border:2px solid var(--deep-purple); border-radius:50%;"></div>
+                <div class="dot" id="dot2" style="width:16px; height:16px; border:2px solid var(--deep-purple); border-radius:50%;"></div>
+                <div class="dot" id="dot3" style="width:16px; height:16px; border:2px solid var(--deep-purple); border-radius:50%;"></div>
+                <div class="dot" id="dot4" style="width:16px; height:16px; border:2px solid var(--deep-purple); border-radius:50%;"></div>
+            </div>
+            <div class="numpad">
+                <button class="num-btn" onclick="addPin('1')">1</button><button class="num-btn" onclick="addPin('2')">2</button><button class="num-btn" onclick="addPin('3')">3</button>
+                <button class="num-btn" onclick="addPin('4')">4</button><button class="num-btn" onclick="addPin('5')">5</button><button class="num-btn" onclick="addPin('6')">6</button>
+                <button class="num-btn" onclick="addPin('7')">7</button><button class="num-btn" onclick="addPin('8')">8</button><button class="num-btn" onclick="addPin('9')">9</button>
+                <button class="num-btn" style="font-size:0.7rem; background:#f8f0ff;" onclick="delPin()">DEL</button>
+                <button class="num-btn" onclick="addPin('0')">0</button>
+                <button class="num-btn" style="background:var(--deep-purple); color:white; border:none;" onclick="checkPin()">OK</button>
+            </div>
+            <p style="margin-top:20px; color:var(--deep-purple); cursor:pointer; text-decoration:underline;" onclick="toggleClue(true)">Lihat Clue</p>
+        </div>
+    </div>
+
+    <div id="page1" class="page">
+        <div class="content-box fade-in">
+            <video src="vidio-kucing/vid2.mp4" class="bg-video-top" autoplay loop muted playsinline></video>
+            <div class="text-wrapper" style="margin-top: 60px;"> 
+                <h2>Halo Sayang...</h2>
+                <p>Selamat datang di ruang kecil yang aku buat untuk kamu. Yuk explore satu-satu, hope this makes your day! ❤️</p>
+                <div style="display:flex; gap:10px; width:100%; justify-content:center;">
+                    <button class="btn-float" style="width:auto; min-width:90px;" onclick="showPage('page2')">Iyaa Sayang✨</button>
+                    <button id="no-btn" class="btn-float" style="background:#CBD5E1; color:#86648b; width:auto; min-width:60px;" onclick="kecilkanTombol()">Gaa</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page2" class="page">
+        <div class="content-box fade-in">
+            <h1>Main Menu 🐾</h1>
+            <button class="btn-float" onclick="bukaHalaman('page3', 'surat')">💌 Love Letter</button>
+            <button class="btn-float" onclick="bukaHalaman('page4', 'kartu')">🎂 Birthday Card</button>
+            <button class="btn-float" onclick="showPage('page5')">📸 Moments</button>
+        </div>
+    </div>
+
+    <div id="page3" class="page">
+        <div class="content-box wide-box fade-in">
+            <div class="media-16-9">
+                <video src="vidio-haidar.mp4" controls autoplay muted loop playsinline type="video/mp4"></video>
+            </div>
+            <div id="teks-surat" class="text-wrapper"></div>
+            <button id="btn-back1" class="btn-float" style="display:none;" onclick="showPage('page2')">Exit</button>
+        </div>
+    </div>
+
+    <div id="page4" class="page">
+        <div class="content-box fade-in">
+            <div class="media-square">
+                <img src="foto-haidar.jpg">
+            </div>
+            <div id="teks-kartu" class="text-wrapper"></div>
+            <button id="btn-back2" class="btn-float" style="display:none;" onclick="showPage('page2')">Exit</button>
+        </div>
+    </div>
+
+    <div id="page5" class="page">
+        <div class="content-box fade-in" style="background: rgba(255, 255, 255, 0.85); padding: 15px;">
+            <div class="text-wrapper">
+                <h2 style="color:var(--deep-purple); margin: 5px 0;">Harapan aku untuk kita✨</h2>
+                <p>Di tengah dunia kamu yang ramai, semoga aku menjadi bagian dari tujuan kamu di masa depan, dan bukan hanya untuk pelarian kamu saat ini. Semoga kita selalu punya cukup sabar untuk saling mengerti dan cukup kuat untuk tetap searah. Tetap jadi Haidar yang aku kenal ya,aku harap kita bisa tumbuh bareng-bareng selamanya. I love you more than words can say</p>
+                <button class="btn-float" onclick="showPage('page6')">Aamiin ✨</button>
+            </div>
+        </div>
+        <div class="slider-wrapper">
+            <div class="slider-track">
+                <img src="moments/moment1.jpg"><img src="moments/moment2.jpg"><img src="moments/moment3.jpg"><img src="moments/moment4.jpg"><img src="moments/moment5.jpg"><img src="moments/moment6.jpg"><img src="moments/moment7.jpg"><img src="moments/moment8.jpg"><img src="moments/moment9.jpg"><img src="moments/moment10.jpg"><img src="moments/moment11.jpg"><img src="moments/moment12.jpg"><img src="moments/moment13.jpg"><img src="moments/moment14.jpg"><img src="moments/moment15.jpg">
+                <img src="moments/moment1.jpg"><img src="moments/moment2.jpg"><img src="moments/moment3.jpg"><img src="moments/moment4.jpg"><img src="moments/moment5.jpg"><img src="moments/moment6.jpg"><img src="moments/moment7.jpg"><img src="moments/moment8.jpg"><img src="moments/moment9.jpg"><img src="moments/moment10.jpg"><img src="moments/moment11.jpg"><img src="moments/moment12.jpg"><img src="moments/moment13.jpg"><img src="moments/moment14.jpg"><img src="moments/moment15.jpg">
+            </div>
+        </div>
+    </div>
+
+    <div id="page6" class="page">
+        <div class="content-box fade-in">
+            <video src="vidio-kucing/vid3.mp4" class="bg-video-top" autoplay loop muted playsinline></video>
+            <div class="text-wrapper" style="margin-top: 60px;">
+                <h2>I Love You More! ❤️</h2>
+                <p>Terakhir dari aku... terima kasih sudah memilih untuk tetap di sini, di sampingku, dengan segala kurang dan lebihnya aku. Kamu bukan cuma seseorang yang aku sayang, tapi rumah tempat aku merasa aman. Aku buat web sederhana ini sepenuh hati cuma buat kamu, semoga kamu suka ya! Aku ingin kamu tahu kalau aku bersyukur banget punya kamu, sayang. Jangan pernah merasa sendiri, karena aku akan selalu jadi pendukung nomor satumu. Always you, only you.</p>
+                <button class="btn-float" onclick="location.reload()">Ulangi</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPin = ""; const correctPin = "1727"; let noScale = 1;
+        const canvas = document.getElementById('techCanvas'); const ctx = canvas.getContext('2d');
+        let particles = []; let fallingActive = true;
+        let animationId;
+
+        document.addEventListener('click', (e) => {
+            const h = document.createElement('div'); h.className = 'click-heart'; h.innerHTML = '❤️';
+            h.style.left = e.clientX+'px'; h.style.top = e.clientY+'px';
+            document.body.appendChild(h); setTimeout(() => h.remove(), 1000);
+        });
+
+        function addPin(n) { if(currentPin.length < 4) { currentPin += n; updateDots(); } }
+        function delPin() { currentPin = currentPin.slice(0, -1); updateDots(); }
+        function updateDots() { for(let i=1; i<=4; i++) document.getElementById(`dot${i}`).style.background = i <= currentPin.length ? "var(--deep-purple)" : "none"; }
+        
+        function checkPin() { 
+            if(currentPin === correctPin) { 
+                document.getElementById('lagu').play().catch(()=>{}); 
+                showPage('page1'); 
+                document.getElementById('catWalk').style.display='block'; 
+            } else { 
+                alert("Yah, PIN-nya salah sayang... Coba diingat lagi ya! ❤️"); currentPin=""; updateDots(); 
+            } 
+        }
+
+        function toggleClue(s) { document.getElementById('clueModal').style.display = s ? 'flex' : 'none'; }
+
+        function showPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            
+            if(id === 'page5') {
+                canvas.style.display = 'block';
+                document.getElementById('catWalk').style.opacity = '0';
+                fallingActive = false;
+                initTech();
+            } else {
+                canvas.style.display = 'none';
+                document.getElementById('catWalk').style.opacity = '1';
+                fallingActive = true;
+                cancelAnimationFrame(animationId);
+            }
+        }
+
+        function kecilkanTombol() { noScale -= 0.2; const b = document.getElementById('no-btn'); if(noScale > 0.1) b.style.transform = `scale(${noScale})`; else b.style.display = 'none'; }
+
+        function bukaHalaman(id, tipe) {
+            showPage(id);
+            const msg = tipe === 'surat' ? "Sayang, terima kasih yaa sudah menjadi tempat ternyaman untukku pulang. Video ini bukan cuma kumpulan cuplikan, tapi caraku bilang kalau setiap detik bersamamu itu berharga. Terima kasih sudah sesabar itu menghadapi aku. Aku bersyukur memilikimu✨." : "Selamat ulang tahun, Cintaku. Kamu adalah salah satu hal terbaik yang pernah terjadi di hidupku. Semoga bahagiamu selalu penuh, sehatmu terjaga, dan senyummu tetap jadi milikku. Cheers to more years with you✨.";
+            efekKetik(document.getElementById(tipe === 'surat' ? 'teks-surat' : 'teks-kartu'), msg, tipe === 'surat' ? 'btn-back1' : 'btn-back2');
+        }
+
+        function efekKetik(el, txt, btnId) {
+            let i = 0; el.innerHTML = ""; document.getElementById(btnId).style.display = "none";
+            function type() { if(i < txt.length) { el.innerHTML += txt.charAt(i); i++; setTimeout(type, 40); } else { document.getElementById(btnId).style.display = "flex"; } }
+            type();
+        }
+
+        function initTech() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            particles = [];
+            for(let i=0; i<70; i++) {
+                particles.push({
+                    x: Math.random()*canvas.width, y: Math.random()*canvas.height,
+                    vx: (Math.random()-0.5)*1.5, vy: (Math.random()-0.5)*1.5
+                });
+            }
+            animateTech();
+        }
+
+        function animateTech() {
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+            ctx.strokeStyle = "rgba(240, 163, 255, 0.25)";
+            ctx.fillStyle = "rgba(240, 163, 255, 0.9)";
+            for(let i=0; i<particles.length; i++) {
+                let p = particles[i];
+                p.x += p.vx; p.y += p.vy;
+                if(p.x<0 || p.x>canvas.width) p.vx *= -1;
+                if(p.y<0 || p.y>canvas.height) p.vy *= -1;
+                ctx.beginPath(); ctx.arc(p.x, p.y, 2.2, 0, Math.PI*2); ctx.fill();
+                for(let j=i+1; j<particles.length; j++) {
+                    let p2 = particles[j];
+                    let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                    if(dist < 130) {
+                        ctx.lineWidth = 1 - dist/130;
+                        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+                    }
+                }
+            }
+            animationId = requestAnimationFrame(animateTech);
+        }
+
+        setInterval(() => {
+            if(!fallingActive) return;
+            const e = document.createElement('div'); e.className = 'falling'; e.innerHTML = Math.random() > 0.5 ? '🎀' : '🧸';
+            e.style.left = Math.random()*100+"vw"; e.style.animationDuration = (Math.random()*3+5)+"s";
+            document.body.appendChild(e); setTimeout(() => e.remove(), 7000);
+        }, 600);
+    </script>
+</body>
+</html>
